@@ -1,0 +1,75 @@
+name: CI
+
+on:
+    push:
+        branches: ['main', 'dev', 'feat/**']
+    pull_request:
+        branches: ['main']
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        services:
+            python:
+                image: python:3.11-slim
+                options: >-
+                    --health-cmd "python -m pip --version" --health-interval 10s --health-timeout 5s --health-retries 3
+        steps:
+            - uses: actions/checkout@v4
+
+            # 프론트엔드 테스트
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'pnpm'
+
+            - name: Install pnpm
+              run: npm i -g pnpm
+
+            - name: Install frontend deps
+              working-directory: frontend
+              run: pnpm install --frozen-lockfile
+
+            - name: Run frontend tests & lint
+              working-directory: frontend
+              run: |
+                  pnpm lint
+                  pnpm test --run
+
+            # 백엔드 테스트
+            - name: Set up Python 3.11
+              uses: actions/setup-python@v4
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+
+            - name: Install backend deps
+              working-directory: backend
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+                  pip install pytest ruff
+
+            - name: Run backend tests & lint
+              working-directory: backend
+              run: |
+                  pytest -q
+                  ruff .
+
+            # E2E 테스트 (Cypress)
+            - name: Run E2E tests
+              working-directory: frontend
+              run: pnpm e2e
+
+            # Vercel 배포 (토큰은 저장소 시크릿에 저장)
+            - name: Deploy to Vercel
+              uses: amondnet/vercel-action@v25
+              with:
+                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
+                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+                  working-directory: ./frontend
+                  vercel-args: '--prod'
+                  github-comment: false
+ 
