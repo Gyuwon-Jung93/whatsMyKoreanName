@@ -1,7 +1,7 @@
 {
     "builds": [
         { "src": "frontend/package.json", "use": "@vercel/static" },
-        { "src": "backend/*.py", "use": "@vercel/python" }
+        { "src": "backend/*.py", "use": "@vercel/python", "config": { "pythonVersion": "3.10" } }
     ],
     "routes": [
         { "src": "/api/(.*)", "dest": "/backend/$1" },

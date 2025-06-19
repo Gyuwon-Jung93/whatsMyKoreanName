@@ -231,7 +231,7 @@ export default function App() {
                                     <span className="name">{item.koreanName}</span>
                                     <span className="meaning">{item.meaning}</span>
                                     <button type="button" onClick={() => deleteSaved(idx)}>
-                                        삭제
+                                        Delete(삭제)
                                     </button>
                                 </li>
                             ))}
