@@ -139,15 +139,16 @@ export default function App() {
         <main style={{ maxWidth: 480, margin: '0 auto', padding: '2rem' }}>
             <nav className="nav">
                 <button type="button" className={view === 'home' ? 'active' : ''} onClick={() => setView('home')}>
-                    이름 추천
+                    Name Recommendation
                 </button>
                 <button type="button" className={view === 'saved' ? 'active' : ''} onClick={() => setView('saved')}>
-                    내 이름 모아보기 ({savedList.length})
+                    Saved my Korean names ({savedList.length})
                 </button>
             </nav>
             {view === 'home' && (
                 <>
                     <h1>나의 한국어 이름은?</h1>
+                    <h1>What is your Korean name?</h1>
                     <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem' }}>
                         <label htmlFor="englishName" className="sr-only">
                             영어 이름
@@ -156,7 +157,7 @@ export default function App() {
                             id="englishName"
                             name="englishName"
                             type="text"
-                            placeholder="영어 이름 입력..."
+                            placeholder="Write your name in English..."
                             value={name}
                             onChange={handleChange}
                             maxLength={30}
@@ -167,7 +168,7 @@ export default function App() {
                             style={{ flex: 1, padding: '0.5rem' }}
                         />
                         <button type="submit" disabled={loading || !!error || !name.trim()}>
-                            {loading ? '로딩...' : '추천'}
+                            {loading ? '로딩...' : 'Recommend'}
                         </button>
                     </form>
                     {error && (
